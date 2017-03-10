@@ -9,9 +9,9 @@ public class TEMPLATE_Strategy extends Strategy{
 	 *  double lastResult
 	 *  	- info about last game -> score
 	 *  int nrOfOpponents
-	 *  	- number of opponents (only for games with > 2 players)
+	 *  	- number of opponents (only for multiplayer games)
 	 *  double[] opponentMoves
-	 *  	- opponents' last moves - (only for games with > 2 players)
+	 *  	- opponents' last moves - (only for multiplayer games)
 	 */ 
 	
 	// Constructor

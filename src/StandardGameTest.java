@@ -6,16 +6,23 @@ import ipdlx.strategy.*;
  */
 public class StandardGameTest {
 	public static void main(String args[]){
+		System.out.println(Strategy.COOPERATE);
 		// create payoff matrix
-		double p_array[][] = 
-				new double[][]{{3.00, 0.00},
-								{5.00, 1.00}};
+		double p_array[][] = GameMatrix.defaultPayoffMatrix2x2;
 		GameMatrix payoffMatrix = new GameMatrix(p_array);
 		System.out.println(payoffMatrix);
 		
 		// create players with strategies
-		Player player1 = new Player(new TROLL(), "P1"); // troll
-		Player player2 = new Player(new RAND(), "P2"); // random
+		// create a TFTT from table lookup
+		SingleLookup lookup = new LookupArray1D(2); // 2 moves
+		lookup.setAction(new History("CC"), Strategy.COOPERATE);
+		lookup.setAction(new History("CD"), Strategy.COOPERATE);
+		lookup.setAction(new History("DC"), Strategy.COOPERATE);
+		lookup.setAction(new History("DD"), Strategy.DEFECT);
+		History history = new History("CC"); // random history
+		
+		Player player1 = new Player(new SingleLookupStrategy(lookup, history), "P1"); // TFTT
+		Player player2 = new Player(new TFT(), "P2"); // TFT
 		
 		// create a standard game (2 players) -> 50 rounds
 		StandardGame game = new StandardGame(50, payoffMatrix);
