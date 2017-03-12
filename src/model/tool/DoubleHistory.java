@@ -75,4 +75,26 @@ public class DoubleHistory {
 		}
 		return false;
 	}
+
+//	public static void main(String args[]){
+//		DoubleHistory h1 = new DoubleHistory("CDCCDDDDCCDDDCCCCCCDDDDC", 12354);
+//		System.out.println(h1);
+//
+//		
+//		
+//		h1.add(Strategy.COOPERATE, Strategy.DEFECT);
+//		h1.add(Strategy.COOPERATE, Strategy.DEFECT);
+//		System.out.println(h1 + " after cooperating twice, opponent defecting twice");
+//		h1.add(Strategy.DEFECT, Strategy.DEFECT);
+//		System.out.println(h1 + " after defecting once, opponent defecting again");
+//		
+//		h1.flipMove(0, false);
+//		System.out.println(h1 + " after flipping opponent's last move");
+//		h1.flipMove(h1.playerLength()-1, true);
+//		System.out.println(h1 + " after flipping player's earliest move");
+//		h1.flipRandomMove();
+//		System.out.println(h1 + " after flipping random move");
+//		h1.randomize();
+//		System.out.println(h1 + " after randomizing");
+//	}
 }

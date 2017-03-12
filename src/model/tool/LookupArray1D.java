@@ -1,6 +1,7 @@
 package model.tool;
 import java.util.Random;
 
+import controller.LookupState;
 import ipdlx.GameMatrix;
 import ipdlx.GameResult;
 import ipdlx.Player;
@@ -74,10 +75,7 @@ public class LookupArray1D implements SingleLookup{
 	@Override
 	public void flipRandomAction() {
 		int randI = rand.nextInt(tableLength);
-		if (lookupTable[randI] == Strategy.COOPERATE)
-			lookupTable[randI] = Strategy.DEFECT;
-		else
-			lookupTable[randI] = Strategy.COOPERATE;
+		flipAction((long) randI);
 	}
 
 	@Override
@@ -88,10 +86,7 @@ public class LookupArray1D implements SingleLookup{
 
 	@Override
 	public void flipAction(History history) {
-		if (lookupTable[(int) history.getValue()] == Strategy.COOPERATE)
-			lookupTable[(int) history.getValue()] = Strategy.DEFECT;
-		else
-			lookupTable[(int) history.getValue()] = Strategy.COOPERATE;
+		flipAction(history.getValue());
 	}
 
 	@Override
@@ -105,6 +100,25 @@ public class LookupArray1D implements SingleLookup{
 			retString += History.longToString(i, historyLength) + " => " + (lookupTable[i]==1.0?"C":"D") + "\n";
 		}
 		return retString;
+	}
+
+	@Override
+	public void flipAction(long historyValue) {
+		if (lookupTable[(int) historyValue] == Strategy.COOPERATE)
+			lookupTable[(int) historyValue] = Strategy.DEFECT;
+		else
+			lookupTable[(int) historyValue] = Strategy.COOPERATE;
+		
+	}
+
+	@Override
+	public void flipAction(LookupState lookupState) {
+		flipAction(lookupState.getRow());
+	}
+
+	@Override
+	public int getLength() {
+		return tableLength;
 	}
 	
 }

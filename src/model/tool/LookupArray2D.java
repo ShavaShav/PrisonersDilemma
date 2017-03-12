@@ -1,6 +1,7 @@
 package model.tool;
 import java.util.Random;
 
+import controller.LookupState;
 import ipdlx.GameMatrix;
 import ipdlx.GameResult;
 import ipdlx.Player;
@@ -80,10 +81,7 @@ public class LookupArray2D implements DoubleLookup {
 	public void flipRandomAction() {
 		int randRow = rand.nextInt(tableRows);
 		int randCol = rand.nextInt(tableCols);
-		if (lookupTable[randRow][randCol] == Strategy.COOPERATE)
-			lookupTable[randRow][randCol] = Strategy.DEFECT;
-		else
-			lookupTable[randRow][randCol] = Strategy.COOPERATE;
+		flipAction(randRow, randCol);
 	}
 
 	@Override
@@ -95,12 +93,8 @@ public class LookupArray2D implements DoubleLookup {
 
 	@Override
 	public void flipAction(DoubleHistory doubleHistory) {
-		int hist1 = (int) doubleHistory.getHistory1Value();
-		int hist2 = (int) doubleHistory.getHistory2Value();
-		if (lookupTable[hist1][hist2] == Strategy.COOPERATE)
-			lookupTable[hist1][hist2] = Strategy.DEFECT;
-		else
-			lookupTable[hist1][hist2] = Strategy.COOPERATE;
+		flipAction(doubleHistory.getHistory1Value(), 
+				doubleHistory.getHistory2Value());
 	}
 
 	@Override
@@ -117,6 +111,29 @@ public class LookupArray2D implements DoubleLookup {
 						" | " + History.longToString(hist2, history2Length) +
 						" => " + (lookupTable[hist1][hist2]==1.0?"C":"D") + "\n";
 		return retString;
+	}
+
+	@Override
+	public void flipAction(long hist1_index, long hist2_index) {
+		if (lookupTable[(int) hist1_index][(int) hist2_index] == Strategy.COOPERATE)
+			lookupTable[(int) hist1_index][(int) hist2_index] = Strategy.DEFECT;
+		else
+			lookupTable[(int) hist1_index][(int) hist2_index] = Strategy.COOPERATE;
+	}
+
+	@Override
+	public void flipAction(LookupState lookupState) {
+		flipAction(lookupState.getRow(), lookupState.getCol());
+	}
+
+	@Override
+	public int getFirstLength() {
+		return tableRows;
+	}
+
+	@Override
+	public int getSecondLength() {
+		return tableCols;
 	}
 	
 }

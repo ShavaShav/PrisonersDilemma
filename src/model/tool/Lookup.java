@@ -3,6 +3,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.Serializable;
 
+import controller.LookupState;
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -17,6 +19,7 @@ public interface Lookup extends Serializable{
 	public abstract void randomize();
 	// change a random action
 	public abstract void flipRandomAction();
+	public abstract void flipAction(LookupState lookupState);
 	// get the score of the table to be used in the fitness function
 	public abstract double getScore(GameMatrix payoffMatrix);
 	public abstract double getScore(GameMatrix payoffMatrix, Strategy strategy);
