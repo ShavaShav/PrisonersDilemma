@@ -1,20 +1,23 @@
 package model.strategy;
+
+import controller.FileInfo;
 import ipdlx.Strategy;
 import model.tool.History;
+import model.tool.Lookup;
 import model.tool.SingleLookup;
 
-public class SingleLookupStrategy extends Strategy {
+public class BestHillClimb extends Strategy {
 	// lookup and history must be initialized to same length!
-	private SingleLookup lookup;
-	private History opponentHistory;
+	SingleLookup lookup;
+	History opponentHistory;
 	
 	// Constructors
-	public SingleLookupStrategy(SingleLookup lookup, History opponentHistory){
+	public BestHillClimb(){
 		super("LKUP", // shows in GUI
 				"Single Lookup",  // full name of strategy
 				"Plays game based off a lookup table containing a history of moves and actions"); // description of strategy
-		this.lookup = lookup;
-		this.opponentHistory = opponentHistory;
+		lookup = (SingleLookup) Lookup.loadLookup(FileInfo.lookupPath, FileInfo.bestHillClimbFileName);
+		opponentHistory = new History(lookup.getHistoryLength());
 	}
 	@Override
 	public double getMove() {
@@ -26,6 +29,4 @@ public class SingleLookupStrategy extends Strategy {
 	public void reset(){
 		opponentMove =  (int) (Math.random() + 0.5);
 	}
-	
-
 }
