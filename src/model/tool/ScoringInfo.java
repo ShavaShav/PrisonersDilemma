@@ -1,5 +1,6 @@
 package model.tool;
 
+import ipdlx.GameMatrix;
 import ipdlx.Strategy;
 import ipdlx.strategy.ALLC;
 import ipdlx.strategy.ALLD;
@@ -12,12 +13,14 @@ import model.strategy.TROLL;
 
 // Used by lookup tables to calculate the score.
 public class ScoringInfo {
-	protected static final double ACCURACY = 100.0;  // 2 decimal places
-	protected static final int NUM_ROUNDS = 20; // number of rounds played per games
-	protected static final int NUM_GAMES = 50; // number of games played against strategy
-	// Strategies that rely on randomness shouldn't be used for scoring
-	protected static final Strategy[] STRATEGIES = {
+	public static final double ACCURACY = 100.0;  // 2 decimal places
+	public static final int NUM_ROUNDS = 20; // number of rounds played per games
+	public static final int NUM_GAMES = 50; // number of games played against strategy
+	// Training set -> Strategies that rely on randomness shouldn't be used for scoring
+	public static final Strategy[] STRATEGIES = {
 		new ALLC(), new ALLD(), new NEG(), new TROLL(),
 		new Pavlov(), new STFT(), new TFT(), new TFTT()
 	};
+	public static final GameMatrix MATRIX = new GameMatrix(GameMatrix.defaultPayoffMatrix2x2);
+
 }

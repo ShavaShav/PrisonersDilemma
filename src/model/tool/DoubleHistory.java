@@ -6,7 +6,7 @@ public class DoubleHistory {
 	
 	public DoubleHistory(int history1Length, int history2Length){
 		this.history1 = new History(history1Length);
-		this.history2 = new History(history1Length);
+		this.history2 = new History(history2Length);
 	}
 	
 	public DoubleHistory(String history1, String history2){

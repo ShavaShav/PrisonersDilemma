@@ -10,7 +10,6 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 
-import ipdlx.GameMatrix;
 import ipdlx.Strategy;
 
 public interface Lookup extends Serializable{
@@ -21,13 +20,13 @@ public interface Lookup extends Serializable{
 	public abstract void flipRandomAction();
 	public abstract void flipAction(LookupState lookupState);
 	// get the score of the table to be used in the fitness function
-	public abstract double getScore(GameMatrix payoffMatrix);
-	public abstract double getScore(GameMatrix payoffMatrix, Strategy strategy);
+	public abstract double getScore();
+	public abstract double getScore(Strategy strategy);
 	// save table to file
 	public static void saveLookup(Lookup lookup, String path, String name){
 		try {
 			FileOutputStream fileOut = new FileOutputStream(path + "/" + name + ".ser");
-			ObjectOutputStream out = new ObjectOutputStream(fileOut);	
+			ObjectOutputStream out = new ObjectOutputStream(fileOut);
 			out.writeObject(lookup);
 			out.close();
 			fileOut.close();

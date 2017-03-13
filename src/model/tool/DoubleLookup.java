@@ -7,4 +7,6 @@ public interface DoubleLookup extends Lookup{
 	public abstract void setAction(DoubleHistory doubleHistory, double action);
 	public abstract int getFirstLength();
 	public abstract int getSecondLength();
+	public abstract int getFirstHistoryLength();
+	public abstract int getSecondHistoryLength();
 }

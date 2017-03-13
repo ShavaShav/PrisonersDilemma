@@ -2,7 +2,6 @@ package model.tool;
 import java.util.Random;
 
 import controller.LookupState;
-import ipdlx.GameMatrix;
 import ipdlx.GameResult;
 import ipdlx.Player;
 import ipdlx.StandardGame;
@@ -39,10 +38,10 @@ public class LookupArray2D implements DoubleLookup {
 	 * per round. This will likely take the most time to compute
 	 */
 	@Override
-	public double getScore(GameMatrix payoffMatrix) {
+	public double getScore() {
 		double score = 0.0;
 		for (int i = 0; i < ScoringInfo.STRATEGIES.length; i++){
-			score += getScore(payoffMatrix, ScoringInfo.STRATEGIES[i]);
+			score += getScore(ScoringInfo.STRATEGIES[i]);
 		}
 		return Math.round((score / ScoringInfo.STRATEGIES.length) * ScoringInfo.ACCURACY) 
 				/ ScoringInfo.ACCURACY;
@@ -50,12 +49,12 @@ public class LookupArray2D implements DoubleLookup {
 	}
 	@Override
 	// get average score score per round against a particular strategy
-	public double getScore(GameMatrix payoffMatrix, Strategy strategy) {
+	public double getScore(Strategy strategy) {
 		double score = 0.0;
 		for (int i = 0; i < ScoringInfo.NUM_GAMES; i++){
 			Player opponent = new Player(strategy, "P2"); // random	
 			// create a standard game (2 players) -> 50 rounds
-			StandardGame game = new StandardGame(ScoringInfo.NUM_ROUNDS, payoffMatrix);
+			StandardGame game = new StandardGame(ScoringInfo.NUM_ROUNDS, ScoringInfo.MATRIX);
 			game.setPlayerA(lookupPlayer);
 			game.setPlayerB(opponent);	
 			// play the game and return results
@@ -134,6 +133,16 @@ public class LookupArray2D implements DoubleLookup {
 	@Override
 	public int getSecondLength() {
 		return tableCols;
+	}
+
+	@Override
+	public int getFirstHistoryLength() {
+		return history1Length;
+	}
+
+	@Override
+	public int getSecondHistoryLength() {
+		return history2Length;
 	}
 	
 }
