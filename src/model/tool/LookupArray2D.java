@@ -18,8 +18,7 @@ public class LookupArray2D implements DoubleLookup {
 	private int history1Length; // for printing
 	private int history2Length;
 	private Random rand;
-	// variables for getting score
-	private Player lookupPlayer;
+
 	
 	public LookupArray2D(int history1Length, int history2Length){
 		this.history1Length = history1Length;
@@ -27,9 +26,6 @@ public class LookupArray2D implements DoubleLookup {
 		tableRows = (int) Math.pow(2, history1Length);
 		tableCols = (int) Math.pow(2, history2Length);
 		lookupTable = new double[tableRows][tableCols];
-		lookupPlayer = new Player(
-						new DoubleLookupStrategy(this, new DoubleHistory(history1Length, history2Length)), 
-						"Lookup");
 	}
 	
 	/*
@@ -50,6 +46,9 @@ public class LookupArray2D implements DoubleLookup {
 	@Override
 	// get average score score per round against a particular strategy
 	public double getScore(Strategy strategy) {
+		Player lookupPlayer = new Player(
+				new DoubleLookupStrategy(this, new DoubleHistory(history1Length, history2Length)), 
+				"Lookup");
 		double score = 0.0;
 		for (int i = 0; i < ScoringInfo.NUM_GAMES; i++){
 			Player opponent = new Player(strategy, "P2"); // random	
