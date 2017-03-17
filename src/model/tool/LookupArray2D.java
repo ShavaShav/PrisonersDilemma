@@ -19,13 +19,13 @@ public class LookupArray2D implements DoubleLookup {
 	private int history2Length;
 	private Random rand;
 
-	
 	public LookupArray2D(int history1Length, int history2Length){
 		this.history1Length = history1Length;
 		this.history2Length = history2Length;
 		tableRows = (int) Math.pow(2, history1Length);
 		tableCols = (int) Math.pow(2, history2Length);
 		lookupTable = new double[tableRows][tableCols];
+		rand = new Random();
 	}
 	
 	/*
@@ -142,6 +142,72 @@ public class LookupArray2D implements DoubleLookup {
 	@Override
 	public int getSecondHistoryLength() {
 		return history2Length;
+	}
+	
+	@Override
+	public Lookup makeChild(Lookup partner) {
+		LookupPair children = makeChildren(partner);
+		if (children.brother.getScore() > children.sister.getScore())
+			return children.brother;
+		else
+			return children.sister;
+		
+	}
+
+	@Override
+	public LookupPair makeChildren(Lookup partner) {
+		if (partner instanceof LookupArray2D){
+			LookupArray2D partner2D = (LookupArray2D) partner;
+			// pick a pivot somewhere in the middle of rows and cols (middle 50%)
+			int quarterRow = tableRows/4;
+			int quarterCol = tableCols/4;
+			int randSplitRow = quarterRow + (int) (Math.random() * (tableRows - (quarterRow)));
+			int randSplitCol = quarterCol + (int) (Math.random() * (tableCols - (quarterCol)));
+			LookupArray2D brother = new LookupArray2D(history1Length, history2Length);
+			LookupArray2D sister = new LookupArray2D(history1Length, history2Length);
+			// top left corner
+			for (int row = 0; row < randSplitRow; row++){
+				for (int col = 0; col < randSplitCol; col++){
+					brother.lookupTable[row][col] = this.lookupTable[row][col];
+					sister.lookupTable[row][col] = partner2D.lookupTable[row][col];	
+				}
+			}
+			//bottom left
+			for (int row = randSplitRow; row < tableRows; row++){
+				for (int col = 0; col < randSplitCol; col++){
+					brother.lookupTable[row][col] = partner2D.lookupTable[row][col];
+					sister.lookupTable[row][col] = this.lookupTable[row][col];	
+				}
+			}
+			// top right
+			for (int row = 0; row < randSplitRow; row++){
+				for (int col = randSplitCol; col < tableCols; col++){
+					brother.lookupTable[row][col] = partner2D.lookupTable[row][col];
+					sister.lookupTable[row][col] = this.lookupTable[row][col];	
+				}
+			}
+			// bottom right
+			for (int row = randSplitRow; row < tableRows; row++){
+				for (int col = randSplitCol; col < tableCols; col++){
+					brother.lookupTable[row][col] = this.lookupTable[row][col];
+					sister.lookupTable[row][col] = partner2D.lookupTable[row][col];	
+				}
+			}
+			return new LookupPair(brother, sister);
+		}
+		return null;
+	}
+
+	@Override
+	public String getActionString() {
+		String retString = "";
+		for (int hist1 = 0; hist1 < tableRows; hist1++){
+			for (int hist2 = 0; hist2 < tableCols; hist2++){
+				retString += lookupTable[hist1][hist2]==1.0?"C":"D";				
+			}
+			retString += "\n";
+		}
+		return retString;
 	}
 	
 }

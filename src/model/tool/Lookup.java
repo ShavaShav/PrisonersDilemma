@@ -22,6 +22,9 @@ public interface Lookup extends Serializable{
 	// get the score of the table to be used in the fitness function
 	public abstract double getScore();
 	public abstract double getScore(Strategy strategy);
+	// for use by genetic algo, tables must be same size!
+	public abstract Lookup makeChild(Lookup partner);
+	public abstract LookupPair makeChildren(Lookup partner);
 	// save table to file
 	public static void saveLookup(Lookup lookup, String path, String name){
 		try {
@@ -53,5 +56,16 @@ public interface Lookup extends Serializable{
 			ex.printStackTrace();
 		}
 		return null;
+	}
+	
+	public abstract String getActionString();
+	
+	public class LookupPair {
+		public Lookup brother;
+		public Lookup sister;
+		public LookupPair(Lookup brother, Lookup sister){
+			this.brother = brother;
+			this.sister = sister;
+		}
 	}
 }

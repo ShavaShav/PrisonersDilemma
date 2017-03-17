@@ -21,6 +21,7 @@ public class LookupArray1D implements SingleLookup{
 		this.historyLength = historyLength;
 		tableLength = (int) Math.pow(2, historyLength);
 		lookupTable = new double[tableLength];
+		rand = new Random();
 	}
 	
 	/*
@@ -122,6 +123,47 @@ public class LookupArray1D implements SingleLookup{
 	@Override
 	public int getHistoryLength() {
 		return historyLength;
+	}
+
+	// this method abandons the weaker child
+	public Lookup makeChild(Lookup partner){
+		LookupPair children = makeChildren(partner);
+		if (children.brother.getScore() > children.sister.getScore())
+			return children.brother;
+		else
+			return children.sister;
+	}
+	
+	@Override
+	public LookupPair makeChildren(Lookup partner) {
+		if (partner instanceof LookupArray1D){
+			LookupArray1D partner1D = (LookupArray1D) partner;
+			// pick a pivot somewhere in the middle (middle 50%)
+			int quarter = tableLength/4;
+			int randSplitI = quarter + (int) (Math.random() * (tableLength - (quarter)));
+			
+			LookupArray1D brother = new LookupArray1D(historyLength);
+			LookupArray1D sister = new LookupArray1D(historyLength);
+			for (int i = 0; i < randSplitI; i++){
+				brother.lookupTable[i] = this.lookupTable[i];
+				sister.lookupTable[i] = partner1D.lookupTable[i];
+			}
+			for (int i = randSplitI; i < tableLength; i++){
+				brother.lookupTable[i] = partner1D.lookupTable[i];
+				sister.lookupTable[i] = this.lookupTable[i];
+			}
+			return new LookupPair(brother, sister);
+		}
+		return null;
+	}
+
+	@Override
+	public String getActionString() {
+		String retString = "";
+		for (int i = 0; i < tableLength; i++){
+			retString += lookupTable[i]==1.0?"C":"D";
+		}
+		return retString;
 	}
 	
 }
