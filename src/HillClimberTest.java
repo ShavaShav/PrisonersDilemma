@@ -1,5 +1,6 @@
 import controller.HillClimber;
 import model.tool.History;
+import model.tool.Logging;
 import model.tool.Lookup;
 import model.tool.LookupArray1D;
 import model.tool.LookupArray2D;
@@ -13,15 +14,17 @@ public class HillClimberTest {
 	private static final boolean DEBUG = false;
 	
 	public static void main(String args[]){
-//    	testAllArrayMethods();
-		SingleLookup lookup = new LookupArray1D(OPPONENT_HISTORY_LENGTH);
-		HillClimber hc = new HillClimber(lookup);
-		hc.setMaxRestarts(MAX_RESTARTS);
-		hc.setMaxSidewaysMoves(MAX_SIDEWAYS_MOVES);
-		HillClimber.DEBUG = true;
-		SingleLookup solution = (SingleLookup) hc.climbHills1D(10,4);
-		double score = solution.getScore();
-		System.out.print("Best " + solution + "\nScore: " + score);
+		Logging.ON = false;
+		testAllArrayMethods();
+		
+//		SingleLookup lookup = new LookupArray1D(OPPONENT_HISTORY_LENGTH);
+//		HillClimber hc = new HillClimber(lookup);
+//		hc.setMaxRestarts(MAX_RESTARTS);
+//		hc.setMaxSidewaysMoves(MAX_SIDEWAYS_MOVES);
+//		HillClimber.DEBUG = true;
+//		SingleLookup solution = (SingleLookup) hc.climbHills1D(10,4);
+//		double score = solution.getScore();
+//		System.out.print("Best " + solution + "\nScore: " + score);
 		
 	}
 
