@@ -7,11 +7,7 @@ import javax.swing.JFrame;
 import ipdlx.*;
 import ipdlx.gui.*;
 import model.strategy.BestHillClimb;
-import model.strategy.SingleLookupStrategy;
 import model.strategy.TROLL;
-import model.tool.History;
-import model.tool.Lookup;
-import model.tool.SingleLookup;
 
 /*
  *  Tournament allows for large game with all possible
