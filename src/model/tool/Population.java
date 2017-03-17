@@ -3,13 +3,14 @@ package model.tool;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import controller.GA;
+
 public class Population {
 	private ArrayList<Lookup> population;
 	ArrayList<IndividualFitness> sortedPopFitness;
 	private Lookup bestIndividual;
-	private double bestScore;
+	private double bestScore, worstScore, avgScore;
 	int alreadyChosenIndex = -1;
-	static double BIAS_TOWARDS_FITNESS = 0.5; // 0 -> 1 where 0 is only strongest, and 1 is random distribution
 	
 	// initializes to an empty pop
 	public Population(){
@@ -23,10 +24,13 @@ public class Population {
 	// only call once population has been filled!
 	// creates a second sorted array, so that best individuals get chosen more often in the rando select
 	public void judge(){
+		avgScore = 0.0;
 		// sort population according to fitness, largest is at index 0
 		sortedPopFitness = new ArrayList<IndividualFitness>();
 		for (Lookup individual : population){
-			IndividualFitness individualFitness = new IndividualFitness(individual, individual.getScore());
+			double score = individual.getScore();
+			avgScore += score;
+			IndividualFitness individualFitness = new IndividualFitness(individual, score);
 			sortedPopFitness.add(individualFitness);
 		}
 		sortedPopFitness.sort(new Comparator<IndividualFitness>(){
@@ -42,12 +46,8 @@ public class Population {
 		});
 		bestIndividual = sortedPopFitness.get(0).individual;
 		bestScore = sortedPopFitness.get(0).score;
-		// log sorted member values
-		int i = 1;
-		for (IndividualFitness fitness : sortedPopFitness){
-			Logging.print("Individual " + i++ +" : " + fitness.individual.getActionString());	
-			Logging.println(" Score: " + fitness.score);
-		}
+		worstScore = sortedPopFitness.get(sortedPopFitness.size()-1).score;
+		avgScore /= sortedPopFitness.size();
 	}
 	
 	// select a random individual, leaning towards better scoring tables
@@ -59,13 +59,10 @@ public class Population {
 		}
 		if (alreadyChosenIndex == -1){
 			alreadyChosenIndex = randI; // set father to selection
-			Logging.print("Mating " + randI);
 		}			
 		else {
 			alreadyChosenIndex = -1; // reset father to default
-			Logging.print(" and " + randI + " : ");
 		}
-//		System.out.println(randI);
 		return population.get(randI);
 	}
 	
@@ -81,11 +78,29 @@ public class Population {
 		return bestScore;
 	}
 	
+	public double getAvgScore(){
+		if (avgScore == 0.0)
+			judge();
+		return avgScore;
+	}
+	
+	public double getWorstScore(){
+		if (worstScore == 0.0)
+			judge();
+		return worstScore;
+	}
+	
+	public double getRange(){
+		if (worstScore == 0.0 || bestScore == 0.0)
+			judge();
+		return bestScore - worstScore;
+	}
+	
 	private int pickRandomBiasedI(int min, int max){
 		// chose a random number between 0 and 1
 		double randProb = Math.random();
 		// pick a random index, bias towards stronger individuals
-	    randProb = Math.pow(randProb, BIAS_TOWARDS_FITNESS);
+	    randProb = Math.pow(randProb, GA.BIAS_TOWARDS_FITNESS);
 	    return (int) (min + (max - min) * randProb);
 	}
 	
@@ -109,25 +124,24 @@ public class Population {
 		}
 	}
 	
-	
 	public static void main(String[] args) {
-		Logging.ON = false;
+//		Logging.ON = false;
 		Population pop = new Population();
-		for (int i = 0; i < 10; i++){
-			LookupArray2D lookup = new LookupArray2D(3, 3);
-			lookup.randomize();
-			pop.add(lookup);
-		}
-		pop.judge(); // sets scores and probabilities
-		
-		System.out.println("Lookup A: \n" + pop.population.get(0).getActionString() + "\nLookup B: \n" + pop.population.get(1).getActionString());
-		Lookup child = pop.population.get(0).makeChild(pop.population.get(1));
-		System.out.println("Child of A & B:" );
-		System.out.println(child.getActionString());
-		
+//		for (int i = 0; i < 10; i++){
+//			LookupArray2D lookup = new LookupArray2D(3, 3);
+//			lookup.randomize();
+//			pop.add(lookup);
+//		}
+//		pop.judge(); // sets scores and probabilities
+//		
+//		System.out.println("Lookup A: \n" + pop.population.get(0).getActionString() + "\nLookup B: \n" + pop.population.get(1).getActionString());
+//		Lookup child = pop.population.get(0).makeChild(pop.population.get(1));
+//		System.out.println("Child of A & B:" );
+//		System.out.println(child.getActionString());
+//		
 		// Testing skew
 		pop.printSkewGraph();
-		
+//		
 	}
 
 }
