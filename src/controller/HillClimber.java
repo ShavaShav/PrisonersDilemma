@@ -4,14 +4,17 @@ import model.tool.Lookup;
 import model.tool.LookupArray1D;
 import model.tool.SingleLookup;
 import model.tool.DoubleLookup;
+import model.tool.Logging;
 
 public class HillClimber {
 	public static boolean DEBUG = false;
+	
 	private Lookup lookup;
 	private double maxScore; // if restart, should keep the better lookup
 	private double currentMaxScore;
 	private int numRestarts, numIterations, maxRestarts;
 	private int sidewaysMoves, maxSideways, totalSidewaysMoves;
+	private boolean singleLookup;
 	
 	public HillClimber(Lookup lookup){
 		this.lookup = lookup;
@@ -23,6 +26,10 @@ public class HillClimber {
 		totalSidewaysMoves = 0; // moves over all restarts
 		numRestarts = 0;
 		numIterations = 0;
+		if (lookup instanceof SingleLookup)
+			singleLookup = true;
+		else
+			singleLookup = false;
 	}
 	
 	public void setMaxRestarts(int maxRestarts){
@@ -41,6 +48,7 @@ public class HillClimber {
 	
 	// will alter the current lookup table!
 	public Lookup climbHill(){
+		initLogging(maxRestarts, maxSideways);
 		// look for better tables until we hit a local max
 		while (true) {
 			// get the next best neighbour
@@ -77,6 +85,7 @@ public class HillClimber {
 				}			
 			}
 			numIterations++;
+			Logging.println(String.format("%-8d%-10."+Logging.dec+"f", numIterations, currentMaxScore));
 		}
 	}
 	
@@ -84,7 +93,7 @@ public class HillClimber {
 	private LookupState getNeighbour(){
 		// using a collection class to store indices of neighbours, instead of making new tables
 		LookupState bestNeighbour = new LookupState();
-		if (lookup instanceof SingleLookup){
+		if (singleLookup){
 			SingleLookup singleLookup = (SingleLookup)lookup;
 			for (int history = 0; history < singleLookup.getLength(); history++){
 				singleLookup.flipAction(history); // change state
@@ -134,5 +143,15 @@ public class HillClimber {
 		lookup = (LookupArray1D) Lookup.loadLookup(FileInfo.lookupPath, FileInfo.bestHillClimbFileName);
 		return lookup;	
 	}
-
+	
+	private void initLogging(int maxRestarts, int maxSidewaysMoves){
+		Logging.println((singleLookup?"1D":"2D") + " Hill Climb\n");
+		Logging.println(" MaxRestarts:\t" + maxRestarts);
+		Logging.println(" MaxSideways:\t" + maxSidewaysMoves);
+		Logging.println(" StartingScore:\t" + currentMaxScore);
+		Logging.println("");
+		Logging.println(String.format("%-8s%-10s", "", "Current"));
+		Logging.println(String.format("%-8s%-10s", "Iter.", "Score"));
+		Logging.println(String.format("%-8s%-10s", "*****", "*****"));
+	}
 }

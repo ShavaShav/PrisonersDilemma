@@ -8,14 +8,19 @@ import model.tool.Population;
 
 // genetic algorithm
 public class GA {
+	public static boolean DEBUG = false;
 	
 	private boolean singleLookup;
 	private int history1Length;
 	private int history2Length;
-	public static double MUT_PROB = 0.1;
 	private Lookup bestIndividual;
 	private boolean evolved;
-	public static boolean DEBUG = false;
+	// probability of a mutation
+	public static double MUT_PROB = 0.1; 
+	// Who gets to mate, 0 -> 1 where 0 is only strongest, and 1 is random
+	public static double BIAS_TOWARDS_FITNESS = 0.5; 
+	
+	public int numMutations = 0;
 	
 	// can change the type once constructed
 	public GA(int historyLength){
@@ -41,60 +46,45 @@ public class GA {
 			return null;
 		}
 		
-		Logging.println("Starting Evolution!");
-		Logging.println(" Pop. Size:\t" + populationSize);
-		Logging.println(" Generations:\t" + numGenerations);
-		Logging.println(" Child/Couple:\t" + numChildrenPerCouple);
-		Logging.println(" MutationProb:\t" + MUT_PROB);
-		Logging.println(" SingleLookup?:\t" + singleLookup);
-		
 		Population population = getInitialPopulation(populationSize); // random individuals
+		
+		initLogging(populationSize, numGenerations, numChildrenPerCouple);
+		
 		for (int gen = 1; gen <= numGenerations; gen++){
-			
-			Logging.println("***Generation***"+ gen);
+			// log info about current generation
+			Logging.println(String.format("%-8d%-10."+Logging.dec+"f%-10."+Logging.dec+"f%-10."+Logging.dec+"f%-10."+Logging.dec+"f",
+					gen, population.getBestScore(), population.getWorstScore(), population.getAvgScore(), population.getRange()));
 			
 			if (DEBUG) System.out.println("Generation " + gen + ": Best Score: " + population.getBestScore());
 			
 			Population nextGeneration = new Population(); // empty population
 			// create a new population from the current one
 			for (int i = 0; i < populationSize; i++){
-				
 				// select two members, leaning towards strong ones
 				Lookup father = population.randomSelection();
 				Lookup mother = population.randomSelection();
 				if (numChildrenPerCouple == 1){
 					// reproduce
 					Lookup child = father.makeChild(mother);
-					
 					// mutate child with small probability
 					if (Math.random() < MUT_PROB){
-						Logging.print(("(M) ")); // mutation
 						child.flipRandomAction();
-					}
-					
-					Logging.println(child.getActionString() + " Score " + child.getScore());
-					
+						numMutations++;
+					}					
 					// add child to new population
 					nextGeneration.add(child);
 				} else { // 2 children
 					// reproduce
 					Lookup.LookupPair children = father.makeChildren(mother);
-					
 					// mutate children with small probability
 					if (Math.random() < MUT_PROB){
-						Logging.print("(M) ");
 						children.brother.flipRandomAction();
-					}
-					
-					Logging.print(children.brother.getActionString() + " Score " + children.brother.getScore() + " and ");
-					
-					if (Math.random() < MUT_PROB){
-						Logging.print("(M) ");						
+						numMutations++;
+					}					
+					if (Math.random() < MUT_PROB){					
 						children.sister.flipRandomAction();
-					}
-					
-					Logging.println(children.sister.getActionString() + " Score " + children.sister.getScore());
-					
+						numMutations++;
+					}				
 					// add children to new population
 					nextGeneration.add(children.brother);
 					i++;
@@ -131,5 +121,17 @@ public class GA {
 		}
 		pop.judge(); // score members so can select the strongest randomly
 		return pop;
+	}
+	
+	private void initLogging(int populationSize, int numGenerations, int numChildrenPerCouple){
+		Logging.println((singleLookup?"1D":"2D") + " Genetic Algorithm\n");
+		Logging.println("Pop. Size:\t" + populationSize);
+		Logging.println(" Generations:\t" + numGenerations);
+		Logging.println(" Child/Couple:\t" + numChildrenPerCouple);
+		Logging.println(" MutationProb:\t" + MUT_PROB*100 + "%");
+		Logging.println("");
+		Logging.println(String.format("%-8s%-10s%-10s%-10s%-10s", "", "Best", "Worst", "Avg.", ""));
+		Logging.println(String.format("%-8s%-10s%-10s%-10s%-10s", "Gen.", "Score", "Score", "Score","Range"));
+		Logging.println(String.format("%-8s%-10s%-10s%-10s%-10s", "****", "*****", "*****", "*****", "*****"));
 	}
 }
